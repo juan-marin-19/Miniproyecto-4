@@ -34,6 +34,7 @@ public class ThreadPlayMachine extends Thread {
     }
 
     private void putCardOnTheTable(){
+        //IMPLEMENTAR aqui la logica para que machine escoja correctamente la targeta que pueda usar segun las reglas
         int index = (int) (Math.random() * machinePlayer.getCardsPlayer().size());
         Card card = machinePlayer.getCard(index);
         table.addCardOnTheTable(card);

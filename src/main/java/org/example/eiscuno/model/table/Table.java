@@ -7,8 +7,9 @@ import java.util.ArrayList;
 /**
  * Represents the table in the Uno game where cards are played.
  */
-public class Table {
+public class  Table {
     private ArrayList<Card> cardsTable;
+    private int lastCardIndex = -1;
 
     /**
      * Constructs a new Table object with no cards on it.
@@ -24,8 +25,14 @@ public class Table {
      */
     public void addCardOnTheTable(Card card){
         this.cardsTable.add(card);
+        lastCardIndex++;
+        System.out.println(lastCardIndex);
     }
 
+    public boolean canAddCard(Card card){
+        //usando el array la ultima carta veo si puedo añadir una carta y uso este metodo para verificar si puedo usar el metodo addCardOnTable
+        return true;
+    }
     /**
      * Retrieves the current card on the table.
      *

@@ -35,7 +35,11 @@ public class GameUnoController {
     private int posInitCardToShow;
 
     private ThreadSingUNOMachine threadSingUNOMachine;
+    private Thread threadSingUNO;
+
     private ThreadPlayMachine threadPlayMachine;
+
+
 
     /**
      * Initializes the controller.
@@ -47,8 +51,8 @@ public class GameUnoController {
         printCardsHumanPlayer();
 
         threadSingUNOMachine = new ThreadSingUNOMachine(this.humanPlayer.getCardsPlayer());
-        Thread t = new Thread(threadSingUNOMachine, "ThreadSingUNO");
-        t.start();
+        threadSingUNO = new Thread(threadSingUNOMachine, "ThreadSingUNO");
+        threadSingUNO.start();
 
         threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView);
         threadPlayMachine.start();
@@ -62,7 +66,7 @@ public class GameUnoController {
         this.machinePlayer = new Player("MACHINE_PLAYER");
         this.deck = new Deck();
         this.table = new Table();
-        this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);
+        this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);//tabla gameUno == tabla del controlador
         this.posInitCardToShow = 0;
     }
 
@@ -78,7 +82,11 @@ public class GameUnoController {
             ImageView cardImageView = card.getCard();
 
             cardImageView.setOnMouseClicked((MouseEvent event) -> {
-                // Aqui deberian verificar si pueden en la tabla jugar esa carta
+                // Aqui deberian verificar si pued|en en la tabla jugar esa carta
+
+                //aqui en threadplaymachine en lugar de usar la tabla de aqui uso la de gameuno y lo hago con esa , elimino la tabla aqui porque ya tengo
+                // la del gameUno
+
                 gameUno.playCard(card);
                 tableImageView.setImage(card.getImage());
                 humanPlayer.removeCard(findPosCardsHumanPlayer(card));
@@ -149,5 +157,8 @@ public class GameUnoController {
     @FXML
     void onHandleUno(ActionEvent event) {
         // Implement logic to handle Uno event here
+        threadSingUNOMachine.setPlayerHasSungUno(true);
+
+
     }
 }
