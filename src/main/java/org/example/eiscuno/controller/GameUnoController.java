@@ -1,17 +1,24 @@
 package org.example.eiscuno.controller;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.game.GameUno;
+import org.example.eiscuno.model.game.WinThread;
 import org.example.eiscuno.model.machine.ThreadPlayMachine;
 import org.example.eiscuno.model.machine.ThreadSingUNOMachine;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller class for the Uno game.
@@ -37,6 +44,7 @@ public class GameUnoController {
     private ThreadSingUNOMachine threadSingUNOMachine;
     private Thread threadSingUNO;
 
+    private WinThread winThread;
     private ThreadPlayMachine threadPlayMachine;
 
 
@@ -54,8 +62,11 @@ public class GameUnoController {
         threadSingUNO = new Thread(threadSingUNOMachine, "ThreadSingUNO");
         threadSingUNO.start();
 
-        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView);
+        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView,this.gameUno,this.deck);
         threadPlayMachine.start();
+
+        winThread = new WinThread(gameUno,machinePlayer,humanPlayer, deck,threadPlayMachine,threadSingUNO);
+        winThread.start();
     }
 
     /**
@@ -66,7 +77,7 @@ public class GameUnoController {
         this.machinePlayer = new Player("MACHINE_PLAYER");
         this.deck = new Deck();
         this.table = new Table();
-        this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);//tabla gameUno == tabla del controlador
+        this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);//tabla gameUno == tabla del controlador( paso por referencia)
         this.posInitCardToShow = 0;
     }
 
@@ -82,15 +93,27 @@ public class GameUnoController {
             ImageView cardImageView = card.getCard();
 
             cardImageView.setOnMouseClicked((MouseEvent event) -> {
-                // Aqui deberian verificar si pued|en en la tabla jugar esa carta
 
-                //aqui en threadplaymachine en lugar de usar la tabla de aqui uso la de gameuno y lo hago con esa , elimino la tabla aqui porque ya tengo
-                // la del gameUno
+                //AQUI necesito saber si la carta es de color "choose" para cambiarle el color
+                if(table.canAddCardTable(card)){
 
-                gameUno.playCard(card);
-                tableImageView.setImage(card.getImage());
-                humanPlayer.removeCard(findPosCardsHumanPlayer(card));
-                threadPlayMachine.setHasPlayerPlayed(true);
+                    if (card.getColor().equals("CHOOSE")) {
+                        ColorPickerController controller = new ColorPickerController();
+                        String color = controller.showAndWait();
+                        card.setColor(color);
+                        System.out.println("Color escogido: " + color);
+                    }
+
+                    gameUno.playCard(card);
+                    tableImageView.setImage(card.getImage());
+                    humanPlayer.removeCard(findPosCardsHumanPlayer(card));
+                    threadPlayMachine.setHasPlayerPlayed(true);
+
+                }
+                else{
+                    System.out.println("Can't add card");
+                }
+
                 printCardsHumanPlayer();
             });
 
@@ -146,7 +169,15 @@ public class GameUnoController {
      */
     @FXML
     void onHandleTakeCard(ActionEvent event) {
-        // Implement logic to take a card here
+
+        if (gameUno.mustDrawFromDeck(humanPlayer)) {
+            humanPlayer.addCard(this.deck.takeCard());
+            threadPlayMachine.setHasPlayerPlayed(true);
+            printCardsHumanPlayer();
+        } else {
+            System.out.println("puedes añadir al menos una carta de tu mazo");
+        }
+
     }
 
     /**
@@ -161,4 +192,6 @@ public class GameUnoController {
 
 
     }
+
+
 }

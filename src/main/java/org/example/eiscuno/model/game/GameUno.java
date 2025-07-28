@@ -15,6 +15,8 @@ public class GameUno implements IGameUno {
     private Player machinePlayer;
     private Deck deck;
     private Table table;
+    private volatile boolean gameEnded = false;
+
 
     /**
      * Constructs a new GameUno instance.
@@ -103,12 +105,30 @@ public class GameUno implements IGameUno {
     }
 
     /**
+     *
+     * Check every card of the player to determine if a card cannot be taken from the deck
+     *
+     * @param player a player (machine or human player)
+     * @return  boolean of whether the player must take from the deck or not
+     * */
+    public boolean mustDrawFromDeck(Player player) {
+
+        for( int i = 0; i < player.getCardsPlayer().size(); i++) {
+            if(table.canAddCardTable(player.getCard(i))){return false;}
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if the game is over.
      *
      * @return True if the deck is empty, indicating the game is over; otherwise, false.
      */
     @Override
-    public Boolean isGameOver() {
-        return null;
+    public Boolean isGameOver() {return gameEnded;}
+
+    public void setGameEnded(boolean gameEnded) {
+        this.gameEnded = gameEnded;
     }
 }

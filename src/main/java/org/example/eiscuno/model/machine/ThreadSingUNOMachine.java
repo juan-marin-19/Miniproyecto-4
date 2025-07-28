@@ -15,10 +15,11 @@ public class ThreadSingUNOMachine implements Runnable{
 
     @Override
     public void run(){
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
+
             if ( cardsPlayer.size() ==1 ) {
                 try {
-                    Thread.sleep((long) (Math.random() * 5000));
+                    Thread.sleep((long) ((Math.random() * 4000)+1000 ));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
