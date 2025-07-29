@@ -58,11 +58,11 @@ public class GameUnoController {
         this.gameUno.startGame();
         printCardsHumanPlayer();
 
-        threadSingUNOMachine = new ThreadSingUNOMachine(this.humanPlayer.getCardsPlayer());
+        threadSingUNOMachine = new ThreadSingUNOMachine(this.humanPlayer.getCardsPlayer(), this.humanPlayer, this.gameUno,this);
         threadSingUNO = new Thread(threadSingUNOMachine, "ThreadSingUNO");
         threadSingUNO.start();
 
-        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView,this.gameUno,this.deck);
+        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView,this.gameUno,this.deck,this.humanPlayer,this);
         threadPlayMachine.start();
 
         winThread = new WinThread(gameUno,machinePlayer,humanPlayer, deck,threadPlayMachine,threadSingUNO);
@@ -84,7 +84,7 @@ public class GameUnoController {
     /**
      * Prints the human player's cards on the grid pane.
      */
-    private void printCardsHumanPlayer() {
+    public void printCardsHumanPlayer() {
         this.gridPaneCardsPlayer.getChildren().clear();
         Card[] currentVisibleCardsHumanPlayer = this.gameUno.getCurrentVisibleCardsHumanPlayer(this.posInitCardToShow);
 
@@ -104,10 +104,25 @@ public class GameUnoController {
                         System.out.println("Color escogido: " + color);
                     }
 
+                    if(card.getValue().equals("TWO_WILD")){
+                        gameUno.eatCard(machinePlayer,2);
+                        System.out.println("\nMachine ate 2 cards");
+                    } else if (card.getValue().equals("FOUR_WILD")) {
+                        gameUno.eatCard(machinePlayer,4);
+                        System.out.println("\nMachine ate 4 cards");
+                    }
+
                     gameUno.playCard(card);
                     tableImageView.setImage(card.getImage());
                     humanPlayer.removeCard(findPosCardsHumanPlayer(card));
-                    threadPlayMachine.setHasPlayerPlayed(true);
+
+                    if(card.getValue().equals("SKIP") || card.getValue().equals("RESERVE")){
+                        System.out.println("\nEl jugador sigue en su turno");
+                    }else{
+                        System.out.println("\nTurno de la maquina");
+                        threadPlayMachine.setHasPlayerPlayed(true);
+                    }
+
 
                 }
                 else{
