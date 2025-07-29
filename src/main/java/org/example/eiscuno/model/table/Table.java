@@ -1,6 +1,9 @@
 package org.example.eiscuno.model.table;
 
 import org.example.eiscuno.model.card.Card;
+import org.example.eiscuno.model.rules.CardRule;
+import org.example.eiscuno.model.rules.ColorRule;
+import org.example.eiscuno.model.rules.ValueRule;
 
 import java.util.ArrayList;
 
@@ -9,13 +12,18 @@ import java.util.ArrayList;
  */
 public class  Table {
     private ArrayList<Card> cardsTable;
-    private int lastCardIndex = -1;
+    private ArrayList<CardRule> rules;
+
+
 
     /**
      * Constructs a new Table object with no cards on it.
      */
     public Table(){
         this.cardsTable = new ArrayList<Card>();
+        this.rules = new ArrayList<CardRule>();
+        rules.add(new ColorRule());
+        rules.add(new ValueRule());
     }
 
     /**
@@ -25,14 +33,26 @@ public class  Table {
      */
     public void addCardOnTheTable(Card card){
         this.cardsTable.add(card);
-        lastCardIndex++;
-        System.out.println(lastCardIndex);
     }
 
-    public boolean canAddCard(Card card){
-        //usando el array la ultima carta veo si puedo añadir una carta y uso este metodo para verificar si puedo usar el metodo addCardOnTable
-        return true;
+    /**
+     * Determines if the card can be added or not to the table using rules of the interface CardRule
+     *
+     * @param card a card to be placed on the top of the table
+     */
+    public boolean canAddCardTable(Card card){
+
+        if (cardsTable.isEmpty()) return true;
+
+        Card topCard = getCurrentCardOnTheTable();
+
+        for (CardRule rule : rules) {if (rule.canBePlayed(card, topCard)) return true;}
+
+        return false;
+
     }
+
+
     /**
      * Retrieves the current card on the table.
      *

@@ -62,23 +62,33 @@ public class Deck {
             return "8";
         } else if (name.endsWith("9")){
             return "9";
-        } else {
-            return null;
+        } else if (name.startsWith("TWO_WILD")) {
+            return "TWO_WILD";
+        } else if (name.startsWith("FOUR_WILD")) {
+            return "FOUR_WILD";
+        } else if (name.startsWith("SKIP")) {
+            return "SKIP";
+        } else if (name.startsWith("RESERVE")) {
+            return "RESERVE";
+        } else if(name.startsWith("WILD")){
+            return "WILD";
+        }else{
+            return "";
         }
 
     }
 
     private String getCardColor(String name){
-        if(name.startsWith("GREEN")){
+        if(name.startsWith("GREEN") || name.endsWith("GREEN")){
             return "GREEN";
-        } else if(name.startsWith("YELLOW")){
+        } else if(name.startsWith("YELLOW") || name.endsWith("YELLOW")){
             return "YELLOW";
-        } else if(name.startsWith("BLUE")){
+        } else if(name.startsWith("BLUE") || name.endsWith("BLUE")){
             return "BLUE";
-        } else if(name.startsWith("RED")){
+        } else if(name.startsWith("RED") || name.endsWith("RED")){
             return "RED";
         } else {
-            return null;
+            return "CHOOSE";
         }
     }
 
