@@ -17,7 +17,7 @@ public class GameUnoStage extends Stage {
      * Constructs a new instance of GameUnoStage.
      *
      * @throws IOException if an error occurs while loading the FXML file for the game interface.
-     */
+
     public GameUnoStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/eiscuno/game-uno-view.fxml"));
         Parent root;
@@ -38,7 +38,7 @@ public class GameUnoStage extends Stage {
     /**
      * Closes the instance of GameUnoStage.
      * This method is used to clean up resources when the game stage is no longer needed.
-     */
+
     public static void deleteInstance() {
         GameUnoStageHolder.INSTANCE.close();
         GameUnoStageHolder.INSTANCE = null;
@@ -49,7 +49,7 @@ public class GameUnoStage extends Stage {
      *
      * @return the singleton instance of GameUnoStage.
      * @throws IOException if an error occurs while creating the instance.
-     */
+
     public static GameUnoStage getInstance() throws IOException {
         return GameUnoStageHolder.INSTANCE != null ?
                 GameUnoStageHolder.INSTANCE :
@@ -59,8 +59,9 @@ public class GameUnoStage extends Stage {
     /**
      * Holder class for the singleton instance of GameUnoStage.
      * This class ensures lazy initialization of the singleton instance.
-     */
+
     private static class GameUnoStageHolder {
         private static GameUnoStage INSTANCE;
     }
+    */
 }
