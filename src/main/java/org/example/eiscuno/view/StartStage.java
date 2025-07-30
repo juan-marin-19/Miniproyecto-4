@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.example.eiscuno.controller.GameUnoController;
 import org.example.eiscuno.controller.StartController;
@@ -56,20 +57,42 @@ public class StartStage {
      * @throws IOException Si ocurre un error al cargar el archivo FXML
      */
     public void showStartScreen() throws IOException {
-        // Cargar el archivo FXML de la pantalla de inicio
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/eiscuno/start-view.fxml"));
-        Parent root = loader.load();
+        // Cargar el archivo FXML
+        try {
+            // Excepecion marcada
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/eiscuno/start-view.fxml"));
+            Parent root = loader.load(); // Puede lanzar IOException
 
-        // Obtener el controlador y configurar el stageManager
-        StartController controller = loader.getController();
-        controller.setStageManager(this);
+            // Obtener el controlador - Excepecion no marcada
+            StartController controller = loader.getController();
+            if (controller == null) {
+                throw new IllegalStateException("El archivo FXML no tiene un controlador definido (fx:controller)");
+            }
+            controller.setStageManager(this);
 
-        // Configurar y mostrar la escena
-        primaryStage.setScene(new Scene(root));
-        primaryStage.setTitle("Menú Principal - EISC Uno");
-        primaryStage.setFullScreen(true); // Pantalla completa
-        primaryStage.show();
+            // Configurar la escena
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Menú Principal - EISC Uno");
+            primaryStage.setFullScreen(true);
+            primaryStage.show();
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar el archivo FXML: " + e.getMessage());
+            e.printStackTrace();
+            // Opcional: Mostrar un alert al usuario
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error de carga");
+            alert.setHeaderText("No se pudo cargar la interfaz");
+            alert.setContentText("El archivo de la pantalla inicial no se encontró o está dañado.");
+            alert.showAndWait();
+        } catch (IllegalStateException e) {
+            System.err.println("Error de estado: " + e.getMessage());
+            // Terminar la aplicación o recuperarse
+            Platform.exit();
+        }
     }
+
 
     /**
      * Muestra la pantalla del juego UNO.
