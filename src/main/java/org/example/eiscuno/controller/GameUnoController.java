@@ -43,6 +43,7 @@ public class GameUnoController {
     private GameUno gameUno;
     private int posInitCardToShow;
 
+
     private ThreadSingUNOMachine threadSingUNOMachine;
     private Thread threadSingUNO;
 
@@ -114,7 +115,8 @@ public class GameUnoController {
         threadSingUNO = new Thread(threadSingUNOMachine, "ThreadSingUNO");
         threadSingUNO.start();
 
-        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView,this.gameUno,this.deck,this.humanPlayer,this);
+        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView,this.gameUno,this.deck,
+                                                    this.humanPlayer,this);
         threadPlayMachine.start();
 
         winThread = new WinThread(gameUno,machinePlayer,humanPlayer, deck,threadPlayMachine,threadSingUNO);
@@ -131,6 +133,9 @@ public class GameUnoController {
         this.table = new Table();
         this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);//tabla gameUno == tabla del controlador( paso por referencia)
         this.posInitCardToShow = 0;
+        gameUno.playCard(deck.takeCard());
+        tableImageView.setImage(table.getCurrentCardOnTheTable().getImage());
+
     }
 
     /**
@@ -146,43 +151,48 @@ public class GameUnoController {
 
             cardImageView.setOnMouseClicked((MouseEvent event) -> {
 
-                //AQUI necesito saber si la carta es de color "choose" para cambiarle el color
-                if(table.canAddCardTable(card)){
 
-                    if (card.getColor().equals("CHOOSE")) {
-                        ColorPickerController controller = new ColorPickerController();
-                        String color = controller.showAndWait();
-                        card.setColor(color);
-                        System.out.println("Color escogido: " + color);
+                    //AQUI necesito saber si la carta es de color "choose" para cambiarle el color
+                    if (table.canAddCardTable(card)) {
+
+                        if (card.getColor().equals("CHOOSE")) {
+                            ColorPickerController controller = new ColorPickerController();
+                            String color = controller.showAndWait();
+                            card.setColor(color);
+                            System.out.println("Color escogido: " + color);
+                        }
+
+                        if (card.getValue().equals("TWO_WILD")) {
+                            gameUno.eatCard(machinePlayer, 2);
+                            System.out.println("\nMachine ate 2 cards");
+                        } else if (card.getValue().equals("FOUR_WILD")) {
+                            gameUno.eatCard(machinePlayer, 4);
+                            System.out.println("\nMachine ate 4 cards");
+                        }
+
+                        gameUno.playCard(card);
+                        tableImageView.setImage(card.getImage());
+                        humanPlayer.removeCard(findPosCardsHumanPlayer(card));
+
+                        if (card.getValue().equals("SKIP") || card.getValue().equals("RESERVE")) {
+                            System.out.println("\nEl jugador sigue en su turno");
+                        } else {
+                            System.out.println("\nTurno de la maquina");
+                            threadPlayMachine.setHasPlayerPlayed(true);
+                        }
+
+
+
+                    } else {
+                        System.out.println("Can't add card");
                     }
 
-                    if(card.getValue().equals("TWO_WILD")){
-                        gameUno.eatCard(machinePlayer,2);
-                        System.out.println("\nMachine ate 2 cards");
-                    } else if (card.getValue().equals("FOUR_WILD")) {
-                        gameUno.eatCard(machinePlayer,4);
-                        System.out.println("\nMachine ate 4 cards");
-                    }
-
-                    gameUno.playCard(card);
-                    tableImageView.setImage(card.getImage());
-                    humanPlayer.removeCard(findPosCardsHumanPlayer(card));
-
-                    if(card.getValue().equals("SKIP") || card.getValue().equals("RESERVE")){
-                        System.out.println("\nEl jugador sigue en su turno");
-                    }else{
-                        System.out.println("\nTurno de la maquina");
-                        threadPlayMachine.setHasPlayerPlayed(true);
-                    }
+                    printCardsHumanPlayer();
 
 
-                }
-                else{
-                    System.out.println("Can't add card");
-                }
-
-                printCardsHumanPlayer();
             });
+
+
 
             this.gridPaneCardsPlayer.add(cardImageView, i, 0);
         }
@@ -237,13 +247,16 @@ public class GameUnoController {
     @FXML
     void onHandleTakeCard(ActionEvent event) {
 
-        if (gameUno.mustDrawFromDeck(humanPlayer)) {
-            humanPlayer.addCard(this.deck.takeCard());
-            threadPlayMachine.setHasPlayerPlayed(true);
-            printCardsHumanPlayer();
-        } else {
-            System.out.println("puedes añadir al menos una carta de tu mazo");
-        }
+
+            if (gameUno.mustDrawFromDeck(humanPlayer)) {
+                humanPlayer.addCard(this.deck.takeCard());
+                threadPlayMachine.setHasPlayerPlayed(true);
+
+                printCardsHumanPlayer();
+            } else {
+                System.out.println("puedes añadir al menos una carta de tu mazo");
+            }
+
 
     }
 
