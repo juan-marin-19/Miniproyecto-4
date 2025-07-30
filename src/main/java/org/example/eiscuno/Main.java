@@ -3,6 +3,7 @@ package org.example.eiscuno;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.example.eiscuno.view.GameUnoStage;
+import org.example.eiscuno.view.StartStage;
 
 import java.io.IOException;
 
@@ -28,6 +29,12 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        GameUnoStage.getInstance();
+        try {
+            // Configuramos el Stage principal en StartStage
+            StartStage.getInstance().initialize(primaryStage);
+            StartStage.getInstance().showStartScreen();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

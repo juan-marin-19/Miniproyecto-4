@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.eiscuno.controller.StartController"
+            stylesheets="@../eiscuno/css/styles-start.css">
+    <VBox styleClass="main-container">
+        <Button fx:id="playButton" text="Jugar" onAction="#startGame"/>
+        <Button fx:id="continueButton" text="Conituar" onAction="#continueGame"/>
+        <Button fx:id="exitButton" text="Salir" onAction="#exitGame"/>
+    </VBox>
+</AnchorPane>

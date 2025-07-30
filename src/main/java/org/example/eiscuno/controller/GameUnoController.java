@@ -15,7 +15,9 @@ import org.example.eiscuno.model.machine.ThreadPlayMachine;
 import org.example.eiscuno.model.machine.ThreadSingUNOMachine;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
+import org.example.eiscuno.view.StartStage;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +49,57 @@ public class GameUnoController {
     private WinThread winThread;
     private ThreadPlayMachine threadPlayMachine;
 
+    /**
+     * Referencia al gestor principal de pantallas (StartStage) que controla la navegación entre ventanas.
+     * Se utiliza para cambiar entre pantallas (ej. de juego a menú principal) y cerrar la aplicación.
+     *
+     * <p>Esta referencia se inyecta mediante el método {@link #setStageManager(StartStage)}
+     * cuando se carga la pantalla.</p>
+     */
+    private StartStage stageManager;
 
+    /**
+     * Establece la referencia al gestor de pantallas principal (inyección de dependencia).
+     *
+     * @param stageManager Instancia de StartStage que gestiona la navegación entre pantallas
+     *
+     * <p>Este método es llamado automáticamente por {@link StartStage} cuando carga esta pantalla,
+     * permitiendo al controlador solicitar cambios de pantalla.</p>
+     *
+     * @ejemplo
+     * // En StartStage:
+     * StartController controller = loader.getController();
+     * controller.setStageManager(this);
+     */
+
+    public void setStageManager(StartStage stageManager) {
+        this.stageManager = stageManager;
+    }
+
+    /**
+     * Maneja el evento de salida del juego, normalmente vinculado a un botón "Salir" en la UI.
+     *
+     * @param event Objeto ActionEvent con información sobre el evento de clic
+     * @throws IOException Si ocurre un error al cargar la pantalla de inicio
+     *
+     * <p>Acciones realizadas:
+     * <ol>
+     *   <li>Regresa a la pantalla de inicio principal usando {@link StartStage#showStartScreen()}</li>
+     *   <li>Opcionalmente guarda el estado actual del juego antes de salir</li>
+     * </ol></p>
+     *
+     * @nota La implementación actual solo navega de vuelta al inicio.
+     *       Para cerrar completamente la aplicación, usar {@link StartStage#close()}.
+     *
+     * @ejemplo_uso
+     * // En el archivo FXML:
+     * <Button text="Salir" onAction="#exitGame" />
+     */
+    @FXML
+    public void exitGame(ActionEvent event) throws IOException {
+        stageManager.showStartScreen();
+        // Guardar el contenido del juego
+    }
 
     /**
      * Initializes the controller.
