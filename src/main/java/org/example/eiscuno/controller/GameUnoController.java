@@ -209,13 +209,6 @@ public class GameUnoController {
                         }
 
                     } catch (InvalidCardPlayException e) {
-                        Platform.runLater(() -> {
-                            Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error al jugar carta");
-                            alert.setHeaderText("Movimiento inválido");
-                            alert.setContentText(e.getMessage());
-                            alert.showAndWait();
-                        });
                         System.err.println("Error al jugar carta: " + e.getMessage());
                     } catch (Exception e) {
                         System.err.println("Error inesperado: " + e.getMessage());
