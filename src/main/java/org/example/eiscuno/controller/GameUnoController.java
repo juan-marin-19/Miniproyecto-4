@@ -3,10 +3,12 @@ package org.example.eiscuno.controller;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import org.example.eiscuno.exception.InvalidCardPlayException;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.game.GameUno;
@@ -134,59 +136,114 @@ public class GameUnoController {
     }
 
     /**
-     * Prints the human player's cards on the grid pane.
+     * Prints the human player's cards on the grid pane and own exception.
      */
     public void printCardsHumanPlayer() {
-        this.gridPaneCardsPlayer.getChildren().clear();
-        Card[] currentVisibleCardsHumanPlayer = this.gameUno.getCurrentVisibleCardsHumanPlayer(this.posInitCardToShow);
+        try {
+            // Limpiar el GridPane
+            this.gridPaneCardsPlayer.getChildren().clear();
 
-        for (int i = 0; i < currentVisibleCardsHumanPlayer.length; i++) {
-            Card card = currentVisibleCardsHumanPlayer[i];
-            ImageView cardImageView = card.getCard();
+            // Validar que los componentes esenciales estén inicializados
+            if (this.gameUno == null || this.table == null || this.humanPlayer == null) {
+                throw new IllegalStateException("Componentes del juego no inicializados correctamente");
+            }
 
-            cardImageView.setOnMouseClicked((MouseEvent event) -> {
+            // Obtener cartas visibles del jugador humano
+            Card[] currentVisibleCardsHumanPlayer = this.gameUno.getCurrentVisibleCardsHumanPlayer(this.posInitCardToShow);
 
-                //AQUI necesito saber si la carta es de color "choose" para cambiarle el color
-                if(table.canAddCardTable(card)){
+            if (currentVisibleCardsHumanPlayer == null) {
+                throw new InvalidCardPlayException("No se pudieron cargar las cartas del jugador");
+            }
 
-                    if (card.getColor().equals("CHOOSE")) {
-                        ColorPickerController controller = new ColorPickerController();
-                        String color = controller.showAndWait();
-                        card.setColor(color);
-                        System.out.println("Color escogido: " + color);
-                    }
-
-                    if(card.getValue().equals("TWO_WILD")){
-                        gameUno.eatCard(machinePlayer,2);
-                        System.out.println("\nMachine ate 2 cards");
-                    } else if (card.getValue().equals("FOUR_WILD")) {
-                        gameUno.eatCard(machinePlayer,4);
-                        System.out.println("\nMachine ate 4 cards");
-                    }
-
-                    gameUno.playCard(card);
-                    tableImageView.setImage(card.getImage());
-                    humanPlayer.removeCard(findPosCardsHumanPlayer(card));
-
-                    if(card.getValue().equals("SKIP") || card.getValue().equals("RESERVE")){
-                        System.out.println("\nEl jugador sigue en su turno");
-                    }else{
-                        System.out.println("\nTurno de la maquina");
-                        threadPlayMachine.setHasPlayerPlayed(true);
-                    }
-
-
-                }
-                else{
-                    System.out.println("Can't add card");
+            for (int i = 0; i < currentVisibleCardsHumanPlayer.length; i++) {
+                Card card = currentVisibleCardsHumanPlayer[i];
+                if (card == null) {
+                    throw new InvalidCardPlayException("Carta nula encontrada en la posición " + i);
                 }
 
-                printCardsHumanPlayer();
+                ImageView cardImageView = card.getCard();
+                if (cardImageView == null) {
+                    throw new InvalidCardPlayException("La imagen de la carta no está disponible");
+                }
+
+                cardImageView.setOnMouseClicked((MouseEvent event) -> {
+                    try {
+                        if (!table.canAddCardTable(card)) {
+                            throw new InvalidCardPlayException("No puedes jugar la carta " + card.getValue() +
+                                    " de color " + card.getColor() +
+                                    " en este momento");
+                        }
+
+                        // Manejo de cartas especiales CHOOSE
+                        if (card.getColor().equals("CHOOSE")) {
+                            ColorPickerController controller = new ColorPickerController();
+                            String color = controller.showAndWait();
+
+                            if (color == null || color.isEmpty()) {
+                                throw new InvalidCardPlayException("Debes seleccionar un color para la carta especial");
+                            }
+                            card.setColor(color);
+                            System.out.println("Color escogido: " + color);
+                        }
+
+                        // Manejo de cartas WILD
+                        if (card.getValue().equals("TWO_WILD")) {
+                            gameUno.eatCard(machinePlayer, 2);
+                            System.out.println("\nMachine ate 2 cards");
+                        } else if (card.getValue().equals("FOUR_WILD")) {
+                            gameUno.eatCard(machinePlayer, 4);
+                            System.out.println("\nMachine ate 4 cards");
+                        }
+
+                        // Jugar la carta
+                        gameUno.playCard(card);
+                        tableImageView.setImage(card.getImage());
+                        humanPlayer.removeCard(findPosCardsHumanPlayer(card));
+
+                        // Manejo de turnos especiales
+                        if (card.getValue().equals("SKIP") || card.getValue().equals("RESERVE")) {
+                            System.out.println("\nEl jugador sigue en su turno");
+                        } else {
+                            System.out.println("\nTurno de la maquina");
+                            threadPlayMachine.setHasPlayerPlayed(true);
+                        }
+
+                    } catch (InvalidCardPlayException e) {
+                        System.err.println("Error al jugar carta: " + e.getMessage());
+                    } catch (Exception e) {
+                        System.err.println("Error inesperado: " + e.getMessage());
+                        e.printStackTrace();
+                    } finally {
+                        // Actualizar la vista de todas formas
+                        Platform.runLater(() -> printCardsHumanPlayer());
+                    }
+                });
+
+                this.gridPaneCardsPlayer.add(cardImageView, i, 0);
+            }
+        } catch (InvalidCardPlayException e) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error crítico");
+                alert.setHeaderText("No se pueden mostrar las cartas");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
             });
-
-            this.gridPaneCardsPlayer.add(cardImageView, i, 0);
+            System.err.println("Error crítico al imprimir cartas: " + e.getMessage());
+        } catch (Exception e) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error inesperado");
+                alert.setHeaderText("Ocurrió un problema grave");
+                alert.setContentText("El juego no puede continuar: " + e.getMessage());
+                alert.showAndWait();
+            });
+            System.err.println("Error inesperado: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
+
 
     /**
      * Finds the position of a specific card in the human player's hand.

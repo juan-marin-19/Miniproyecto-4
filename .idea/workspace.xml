@@ -5,11 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/view/GameUnoStage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/view/GameUnoStage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/eiscuno/game-uno-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/eiscuno/game-uno-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +46,9 @@
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -70,7 +69,7 @@
     "git-widget-placeholder": "jljlp",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Fabian/Documents/eisc-uno",
+    "last_opened_file_path": "C:/Users/junio/Documents/proyectos/Miniproyecto-4",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -154,6 +153,7 @@
       <workItem from="1753547607163" duration="11769000" />
       <workItem from="1753718036073" duration="19664000" />
       <workItem from="1753861379813" duration="4773000" />
+      <workItem from="1753893763436" duration="9431000" />
     </task>
     <servers />
   </component>
