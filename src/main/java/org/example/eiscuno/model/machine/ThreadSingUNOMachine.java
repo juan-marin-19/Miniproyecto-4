@@ -1,6 +1,7 @@
 package org.example.eiscuno.model.machine;
 
 import javafx.application.Platform;
+import javafx.scene.control.Button;
 import org.example.eiscuno.controller.GameUnoController;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.game.GameUno;
@@ -20,14 +21,16 @@ public class ThreadSingUNOMachine implements Runnable{
     private volatile boolean playerHasSungUno = false;
     private GameUno gameUno;
     private GameUnoController controller; // NUEVA línea arriba
+    private Button unoButton;
 
 
 
-    public ThreadSingUNOMachine(ArrayList<Card> cardsPlayer, Player humanPlayer, GameUno gameUno,GameUnoController controller) {
+    public ThreadSingUNOMachine(ArrayList<Card> cardsPlayer, Player humanPlayer, GameUno gameUno,GameUnoController controller, Button unoButton) {
         this.cardsPlayer = cardsPlayer;
         this.humanPlayer = humanPlayer;
         this.gameUno = gameUno;
         this.controller = controller;
+        this.unoButton = unoButton;
     }
     /**
      * Main loop that keeps checking the player's hand size.
@@ -38,7 +41,7 @@ public class ThreadSingUNOMachine implements Runnable{
     @Override
     public void run(){
         while (!Thread.currentThread().isInterrupted()) {
-
+            unoButton.setVisible(true);
             if ( cardsPlayer.size() ==1 ) {
                 try {
                     Thread.sleep((long) (Math.random() * 2000) + 2000);
@@ -71,7 +74,8 @@ public class ThreadSingUNOMachine implements Runnable{
 
         // IMPLEMENT method to print the player's cards
             Platform.runLater(() -> controller.printCardsHumanPlayer());
-
+            Platform.runLater(() -> controller.showTemporaryMessage("Machine canto uno, comes 1 carta", 1000));
+            unoButton.setVisible(false);
             playerHasSungUno = true;
         }
     }

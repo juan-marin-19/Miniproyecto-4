@@ -118,7 +118,7 @@ public class StartStage {
 
         // Configurar y mostrar la escena
         primaryStage.setScene(new Scene(root));
-        primaryStage.setFullScreen(true); // Mantener pantalla completa
+      //  primaryStage.setFullScreen(true); // Mantener pantalla completa
         primaryStage.setTitle("Juego UNO - EISC Uno");
     }
 

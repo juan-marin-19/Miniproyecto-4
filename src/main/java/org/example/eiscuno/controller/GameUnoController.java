@@ -1,12 +1,16 @@
 package org.example.eiscuno.controller;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
 import org.example.eiscuno.exception.InvalidCardPlayException;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.deck.Deck;
@@ -19,7 +23,6 @@ import org.example.eiscuno.model.table.Table;
 import org.example.eiscuno.view.StartStage;
 
 import java.io.*;
-import java.util.Optional;
 
 /**
  * Controller for the Uno game UI and game flow coordination.
@@ -40,13 +43,22 @@ public class GameUnoController implements Serializable {
     @FXML
     private ImageView tableImageView;
 
+    @FXML
+    public Button unoButton;
+
+    @FXML
+    public Label colorLabel;
+
+    @FXML
+    public Label messageLabel;
+
     private Player humanPlayer;
     private Player machinePlayer;
     private Deck deck;
     private Table table;
     private GameUno gameUno;
     private int posInitCardToShow;
-
+    private final String[] colorNames = {"RED", "BLUE", "GREEN", "YELLOW"};
     private ThreadSingUNOMachine threadSingUNOMachine;
     private transient Thread threadSingUNO;
 
@@ -74,19 +86,36 @@ public class GameUnoController implements Serializable {
      */
     @FXML
     public void initialize() {
+        unoButton.setVisible(false);
         initVariables();
         this.gameUno.startGame();
         printCardsHumanPlayer();
 
-        threadSingUNOMachine = new ThreadSingUNOMachine(this.humanPlayer.getCardsPlayer(), this.humanPlayer, this.gameUno, this);
+        threadSingUNOMachine = new ThreadSingUNOMachine(this.humanPlayer.getCardsPlayer(), this.humanPlayer, this.gameUno, this, unoButton);
         threadSingUNO = new Thread(threadSingUNOMachine, "ThreadSingUNO");
         threadSingUNO.start();
 
-        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView, this.gameUno, this.deck, this.humanPlayer, this);
+        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView, this.gameUno, this.deck, this.humanPlayer, this,
+        colorLabel);
         threadPlayMachine.start();
 
         winThread = new WinThread(gameUno, machinePlayer, humanPlayer, deck, threadPlayMachine, threadSingUNO);
         winThread.start();
+
+
+        // Evento de teclado para manejar navegación con flechas izquierda y derecha
+        Platform.runLater(() -> {
+            gridPaneCardsPlayer.getScene().setOnKeyPressed(event -> {
+                switch (event.getCode()) {
+                    case LEFT -> onHandleBack(new ActionEvent());
+                    case RIGHT -> onHandleNext(new ActionEvent());
+                    default -> {
+                    }
+                }
+            });
+        });
+
+
     }
     /**
      * Initializes all core game-related objects (players, deck, table, and game logic)
@@ -99,7 +128,17 @@ public class GameUnoController implements Serializable {
         this.table = new Table();
         this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);
         this.posInitCardToShow = 0;
-        gameUno.playCard(deck.takeCard());
+
+        Card card = deck.takeCard();
+        if (card.getColor().equals("CHOOSE")) {
+            int color = (int)(Math.random() * 4);
+            card.setColor(colorNames[color]);
+            System.out.println("Color escogido: " + colorNames[color]);
+
+        }
+        colorLabel.setText("Color actual" + card.getColor());
+
+        gameUno.playCard(card);
         tableImageView.setImage(table.getCurrentCardOnTheTable().getImage());
     }
 /**
@@ -133,7 +172,9 @@ public class GameUnoController implements Serializable {
                 cardImageView.setOnMouseClicked((MouseEvent event) -> {
                     try {
                         if (!table.canAddCardTable(card)) {
+                            showTemporaryMessage("no puedes jugar esa carta",1000);
                             throw new InvalidCardPlayException("No puedes jugar la carta " + card.getValue() + " de color " + card.getColor());
+
                         }
 
                         if (card.getColor().equals("CHOOSE")) {
@@ -143,25 +184,31 @@ public class GameUnoController implements Serializable {
                                 throw new InvalidCardPlayException("Debes seleccionar un color para la carta especial");
                             }
                             card.setColor(color);
-                            registrarEventoEnArchivo("Jugador eligió el color: " + color);
+                            saveEventTextPlaneFile("Jugador eligió el color: " + color);
+
                         }
 
                         if (card.getValue().equals("TWO_WILD")) {
                             gameUno.eatCard(machinePlayer, 2);
-                            registrarEventoEnArchivo("Machine comió 2 cartas");
+                            saveEventTextPlaneFile("Machine comió 2 cartas");
+
                         } else if (card.getValue().equals("FOUR_WILD")) {
                             gameUno.eatCard(machinePlayer, 4);
-                            registrarEventoEnArchivo("Machine comió 4 cartas");
+                            saveEventTextPlaneFile("Machine comió 4 cartas");
+
                         }
 
+                        colorLabel.setText("Color actual" + card.getColor());
                         gameUno.playCard(card);
                         tableImageView.setImage(card.getImage());
                         humanPlayer.removeCard(findPosCardsHumanPlayer(card));
 
                         if (card.getValue().equals("SKIP") || card.getValue().equals("RESERVE")) {
-                            registrarEventoEnArchivo("Jugador retiene su turno");
+                            saveEventTextPlaneFile("Jugador retiene su turno");
+                            showTemporaryMessage("Jugador mantiene su turno", 2000);
                         } else {
-                            registrarEventoEnArchivo("Turno de la máquina");
+                            saveEventTextPlaneFile("Turno de la máquina");
+                            showTemporaryMessage("Turno de la maquina", 2000);
                             threadPlayMachine.setHasPlayerPlayed(true);
                         }
 
@@ -211,6 +258,7 @@ public class GameUnoController implements Serializable {
         }
     }
 
+    @FXML
     void onHandleNext(ActionEvent event) {
         if (this.posInitCardToShow < this.humanPlayer.getCardsPlayer().size() - 4) {
             this.posInitCardToShow++;
@@ -222,28 +270,33 @@ public class GameUnoController implements Serializable {
      *
      * @param event the triggered action event
      */
+    @FXML
     void onHandleTakeCard(ActionEvent event) {
         if (gameUno.mustDrawFromDeck(humanPlayer)) {
             humanPlayer.addCard(this.deck.takeCard());
             threadPlayMachine.setHasPlayerPlayed(true);
-            registrarEventoEnArchivo("Jugador tomó una carta del mazo");
+            saveEventTextPlaneFile("Jugador tomó una carta del mazo");
             printCardsHumanPlayer();
         } else {
-            registrarEventoEnArchivo("Jugador puede jugar una carta, no necesita tomar");
+            saveEventTextPlaneFile("Jugador puede jugar una carta, no necesita tomar");
+            System.out.println("Jugador puede jugar carta");
+            showTemporaryMessage("Puedes jugar 1 carta",1000);
         }
     }
 
     @FXML
     void onHandleUno(ActionEvent event) {
         threadSingUNOMachine.setPlayerHasSungUno(true);
-        registrarEventoEnArchivo("Jugador dijo ¡UNO!");
+        saveEventTextPlaneFile("Jugador dijo ¡UNO!");
     }
+
+
     /**
      * Appends a game event message to the persistent log file "eventos_uno.txt".
      *
      * the event description to record
      */
-    private void registrarEventoEnArchivo(String mensaje) {
+    private void saveEventTextPlaneFile(String mensaje) {
         try (FileWriter fw = new FileWriter("eventos_uno.txt", true);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
@@ -251,5 +304,19 @@ public class GameUnoController implements Serializable {
         } catch (IOException e) {
             System.err.println("Error escribiendo en archivo: " + e.getMessage());
         }
+    }
+
+
+
+    public void showTemporaryMessage(String message, int durationMillis) {
+        messageLabel.setText(message);
+        messageLabel.setOpacity(1.0); // Asegura que sea visible al comienzo
+
+        FadeTransition fade = new FadeTransition(Duration.millis(1000), messageLabel); // 1 segundo de desvanecimiento
+        fade.setFromValue(1.0);
+        fade.setToValue(0.0);
+        fade.setDelay(Duration.millis(durationMillis)); // Espera antes de empezar a desvanecer
+        fade.setOnFinished(event -> messageLabel.setText("")); // Limpia el texto al final (opcional)
+        fade.play();
     }
 }
