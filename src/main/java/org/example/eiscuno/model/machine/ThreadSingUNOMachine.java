@@ -73,8 +73,9 @@ public class ThreadSingUNOMachine implements Runnable{
             gameUno.eatCard(humanPlayer,1);
 
         // IMPLEMENT method to print the player's cards
+            Platform.runLater(() -> controller.showTemporaryMessage("Machine canto uno, comes 1 carta", 3000));
             Platform.runLater(() -> controller.printCardsHumanPlayer());
-            Platform.runLater(() -> controller.showTemporaryMessage("Machine canto uno, comes 1 carta", 1000));
+
             unoButton.setVisible(false);
             playerHasSungUno = true;
         }

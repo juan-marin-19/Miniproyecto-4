@@ -99,3 +99,64 @@ Turno de la máquina
 Jugador eligió el color: RED
 Machine comió 4 cartas
 Turno de la máquina
+Jugador puede jugar una carta, no necesita tomar
+Jugador retiene su turno
+Jugador tomó una carta del mazo
+Turno de la máquina
+Jugador dijo ¡UNO!
+Jugador eligió el color: YELLOW
+Machine comió 4 cartas
+Turno de la máquina
+Jugador tomó una carta del mazo
+Turno de la máquina
+Machine comió 2 cartas
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Machine comió 2 cartas
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Jugador tomó una carta del mazo
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Jugador tomó una carta del mazo
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Jugador eligió el color: GREEN
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Jugador retiene su turno
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Jugador tomó una carta del mazo
+Turno de la máquina
+Turno de la máquina
+Turno de la máquina
+Jugador eligió el color: YELLOW
+Machine comió 4 cartas
+Turno de la máquina
+Jugador retiene su turno
+Jugador tomó una carta del mazo
+Jugador retiene su turno
+Jugador retiene su turno
+Jugador dijo ¡UNO!
+Turno de la máquina

@@ -86,7 +86,12 @@ public class GameUnoController implements Serializable {
      */
     @FXML
     public void initialize() {
-        unoButton.setVisible(false);
+
+        Platform.runLater(() -> {
+            unoButton.setVisible(false);
+            unoButton.setManaged(false); // También lo oculta del layout (opcional)
+        });
+
         initVariables();
         this.gameUno.startGame();
         printCardsHumanPlayer();
@@ -136,7 +141,7 @@ public class GameUnoController implements Serializable {
             System.out.println("Color escogido: " + colorNames[color]);
 
         }
-        colorLabel.setText("Color actual" + card.getColor());
+        colorLabel.setText("Color actual: " + card.getColor());
 
         gameUno.playCard(card);
         tableImageView.setImage(table.getCurrentCardOnTheTable().getImage());
@@ -198,7 +203,7 @@ public class GameUnoController implements Serializable {
 
                         }
 
-                        colorLabel.setText("Color actual" + card.getColor());
+                        colorLabel.setText("Color actual: " + card.getColor());
                         gameUno.playCard(card);
                         tableImageView.setImage(card.getImage());
                         humanPlayer.removeCard(findPosCardsHumanPlayer(card));
