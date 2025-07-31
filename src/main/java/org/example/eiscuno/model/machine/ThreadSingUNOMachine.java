@@ -59,6 +59,7 @@ public class ThreadSingUNOMachine implements Runnable{
         }
 
     }
+
     /**
      * Applies the penalty for failing to call UNO: forces the human player to draw one card,
      * updates the UI, and marks that the player has "sung UNO" to avoid repeated penalties.
@@ -73,8 +74,9 @@ public class ThreadSingUNOMachine implements Runnable{
             gameUno.eatCard(humanPlayer,1);
 
         // IMPLEMENT method to print the player's cards
+            Platform.runLater(() -> controller.showTemporaryMessage("Machine canto uno, comes 1 carta", 3000));
             Platform.runLater(() -> controller.printCardsHumanPlayer());
-            Platform.runLater(() -> controller.showTemporaryMessage("Machine canto uno, comes 1 carta", 1000));
+
             unoButton.setVisible(false);
             playerHasSungUno = true;
         }
