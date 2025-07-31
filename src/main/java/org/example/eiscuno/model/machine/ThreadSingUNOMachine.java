@@ -59,6 +59,7 @@ public class ThreadSingUNOMachine implements Runnable{
         }
 
     }
+
     /**
      * Applies the penalty for failing to call UNO: forces the human player to draw one card,
      * updates the UI, and marks that the player has "sung UNO" to avoid repeated penalties.
