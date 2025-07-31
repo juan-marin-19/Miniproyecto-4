@@ -1,8 +1,19 @@
 .main-container{
-    -fx-padding: 30;
     -fx-alignment: CENTER;
 }
 
-Button {
-    -fx-padding: 10;
+.boton-principal {
+    -fx-padding: 10 20;
+    -fx-background-color: #FFD60A;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 2, 0.5, 0, 1);
+}
+
+.boton-principal:hover {
+    -fx-background-color: #FFEA00;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 6, 0.5, 0, 3);
 }

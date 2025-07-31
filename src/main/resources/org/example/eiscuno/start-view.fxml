@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.eiscuno.controller.StartController"
-            stylesheets="@../eiscuno/css/styles-start.css">
-    <VBox styleClass="main-container">
-        <Button fx:id="playButton" text="Jugar" onAction="#startGame"/>
-        <Button fx:id="continueButton" text="Conituar" onAction="#continueGame"/>
-        <Button fx:id="exitButton" text="Salir" onAction="#exitGame"/>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-image: url(org/example/eiscuno/cards-uno/images/background_uno.png); -fx-background-position: center center; -fx-background-size: 130% auto;" stylesheets="@../eiscuno/css/styles-start.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.eiscuno.controller.StartController">
+    <VBox layoutX="427.0" layoutY="223.0" prefHeight="139.0" prefWidth="142.0" spacing="10.0" styleClass="main-container">
+        <Button fx:id="playButton" onAction="#startGame" style="-fx-background-color: #FFD60A; -fx-border-color: black; -fx-border-width: 1.5; -fx-border-radius: 4;" styleClass="boton-principal" text="Jugar" />
+        <Button fx:id="continueButton" onAction="#continueGame" style="-fx-background-color: #FFD60A; -fx-border-color: black; -fx-border-width: 1.5; -fx-border-radius: 4;" styleClass="boton-principal" text="Continuar" />
+        <Button fx:id="exitButton" onAction="#exitGame" style="-fx-background-color: #FFD60A; -fx-border-color: black; -fx-border-width: 1.5; -fx-border-radius: 4;" styleClass="boton-principal" text="Salir" />
     </VBox>
 </AnchorPane>

@@ -74,7 +74,7 @@ public class StartStage {
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Menú Principal - EISC Uno");
-            primaryStage.setFullScreen(true);
+            primaryStage.setFullScreen(false);
             primaryStage.show();
 
         } catch (IOException e) {
