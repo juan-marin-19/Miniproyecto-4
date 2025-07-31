@@ -7,12 +7,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.List;
-
+/**
+ * Simple view that presents a horizontal selection of colored rectangles
+ * for the user to pick a color (used in special UNO cards requiring a color choice).
+ */
 public class ColorPickerView {
 
 
         private final HBox colorBox = new HBox(15);
         private final List<Rectangle> colorRects;
+
+    /**
+     * Constructs the color picker view, setting up layout and color rectangles.
+     */
 
         public ColorPickerView() {
             colorBox.setPadding(new Insets(20));
@@ -27,6 +34,11 @@ public class ColorPickerView {
             colorBox.getChildren().addAll(colorRects);
         }
 
+    /**
+     * Returns the list of color rectangles for selection.
+     *
+     * @return unmodifiable list of color rectangles
+     */
         private Rectangle createRect(Color color) {
             Rectangle rect = new Rectangle(70, 70, color);
             rect.setStroke(Color.BLACK);

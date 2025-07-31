@@ -12,30 +12,35 @@ import org.example.eiscuno.controller.StartController;
 import java.io.IOException;
 
 /**
- * Implementación Singleton para gestionar la ventana principal de la aplicación.
- * Controla la navegación entre pantallas y la configuración del Stage principal.
+ * Singleton implementation for managing the application's main window.
+ * Controls navigation between screens and configuration of the main Stage.
  */
 public class StartStage {
-    // Instancia única para el patrón Singleton
+
+    // Single instance for the Singleton pattern
     private static StartStage instance;
 
-    // Referencia al Stage principal de JavaFX
+
+    // Reference to the main JavaFX Stage
     private Stage primaryStage;
 
     /**
-     * Constructor privado para implementar el patrón Singleton.
-     * Evita la instanciación directa de la clase.
+     * Private constructor to implement the Singleton pattern.
+     * Prevents direct instantiation of the class.
      */
     private StartStage() {
-        // El constructor está vacío porque la inicialización se hace en initialize()
+        // The constructor is empty because initialization is done in initialize()
     }
 
     /**
-     * Obtiene la instancia única de StartStage (patrón Singleton).
-     * @return La instancia única de StartStage
+     * Gets the singleton instance of StartStage (Singleton pattern).
+     * @return The singleton instance of StartStage
      */
     public static StartStage getInstance() {
-        // Creación perezosa: solo se instancia cuando se solicita por primera vez
+        /**
+         * Gets the singleton instance of StartStage (Singleton pattern).
+         * @return The singleton instance of StartStage
+         */
         if (instance == null) {
             instance = new StartStage();
         }
@@ -43,34 +48,37 @@ public class StartStage {
     }
 
     /**
-     * Inicializa el Stage principal de la aplicación.
-     * @param stage El Stage principal proporcionado por JavaFX
+     * Initializes the application's main Stage.
+     * @param stage The main Stage provided by JavaFX
      */
     public void initialize(Stage stage) {
         this.primaryStage = stage;
-        // Configuración básica del Stage
-        primaryStage.setResizable(false); // Evita que el usuario redimensione la ventana
+
+    // Basic Stage Configuration
+        primaryStage.setResizable(false);
+    // Prevents the user from resizing the window
     }
 
     /**
-     * Muestra la pantalla de inicio de la aplicación.
-     * @throws IOException Si ocurre un error al cargar el archivo FXML
+     * Displays the application's home screen.
+     * @throws IOException If an error occurs while loading the FXML file
      */
     public void showStartScreen() throws IOException {
-        // Cargar el archivo FXML
+        // Load the FXML file
         try {
-            // Excepecion marcada
+
+        // Checked exception
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/eiscuno/start-view.fxml"));
             Parent root = loader.load(); // Puede lanzar IOException
 
-            // Obtener el controlador - Excepecion no marcada
+            // Get the handler - Unchecked exception
             StartController controller = loader.getController();
             if (controller == null) {
                 throw new IllegalStateException("El archivo FXML no tiene un controlador definido (fx:controller)");
             }
             controller.setStageManager(this);
 
-            // Configurar la escena
+            // Set up the scene
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Menú Principal - EISC Uno");
@@ -80,7 +88,8 @@ public class StartStage {
         } catch (IOException e) {
             System.err.println("Error al cargar el archivo FXML: " + e.getMessage());
             e.printStackTrace();
-            // Opcional: Mostrar un alert al usuario
+
+        // Optional: Show an alert to the user
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error de carga");
             alert.setHeaderText("No se pudo cargar la interfaz");
@@ -88,7 +97,7 @@ public class StartStage {
             alert.showAndWait();
         } catch (IllegalStateException e) {
             System.err.println("Error de estado: " + e.getMessage());
-            // Terminar la aplicación o recuperarse
+            // Terminate the application or recover
             Platform.exit();
         }
     }

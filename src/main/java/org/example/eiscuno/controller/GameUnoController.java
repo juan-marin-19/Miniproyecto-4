@@ -22,7 +22,10 @@ import java.io.*;
 import java.util.Optional;
 
 /**
- * Controller class for the Uno game.
+ * Controller for the Uno game UI and game flow coordination.
+ * Manages human and machine players, the deck, the table state, and threads responsible
+ * for reacting to UNO calls and machine play. Handles user interactions with their cards,
+ * navigation through visible hand subsets, drawing cards, and declaring UNO.
  */
 public class GameUnoController implements Serializable {
 
@@ -51,6 +54,11 @@ public class GameUnoController implements Serializable {
     private transient ThreadPlayMachine threadPlayMachine;
 
     private transient StartStage stageManager;
+    /**
+     * Sets the stage manager used for navigation (e.g., exiting the game to the start screen).
+     *
+     * @param stageManager the stage manager instance
+     */
 
     public void setStageManager(StartStage stageManager) {
         this.stageManager = stageManager;
@@ -60,7 +68,10 @@ public class GameUnoController implements Serializable {
     public void exitGame(ActionEvent event) throws IOException {
         stageManager.showStartScreen();
     }
-
+    /**
+     * Initializes game variables, starts the game logic, and spawns the background threads
+     * for UNO singing, machine play, and win detection. Also renders the initial human player cards.
+     */
     @FXML
     public void initialize() {
         initVariables();
@@ -77,7 +88,10 @@ public class GameUnoController implements Serializable {
         winThread = new WinThread(gameUno, machinePlayer, humanPlayer, deck, threadPlayMachine, threadSingUNO);
         winThread.start();
     }
-
+    /**
+     * Initializes all core game-related objects (players, deck, table, and game logic)
+     * and prepares the first card on the table.
+     */
     private void initVariables() {
         this.humanPlayer = new Player("HUMAN_PLAYER");
         this.machinePlayer = new Player("MACHINE_PLAYER");
@@ -88,7 +102,13 @@ public class GameUnoController implements Serializable {
         gameUno.playCard(deck.takeCard());
         tableImageView.setImage(table.getCurrentCardOnTheTable().getImage());
     }
-
+/**
+ * Renders the current visible subset of the human player's hand in the UI and
+ * attaches click handlers to allow playing cards. Handles special card logic,
+ * validation, UNO color picking, and logging of events.
+ * <p>
+ * Any exception during rendering is shown to the user via an alert and logged to stderr.
+ */
     public void printCardsHumanPlayer() {
         try {
             this.gridPaneCardsPlayer.getChildren().clear();
@@ -168,7 +188,12 @@ public class GameUnoController implements Serializable {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Finds the index of the given card in the player's hand.
+     *
+     * @param card the card to locate
+     * @return the position index if found, or -1 if not present
+     */
     private Integer findPosCardsHumanPlayer(Card card) {
         for (int i = 0; i < this.humanPlayer.getCardsPlayer().size(); i++) {
             if (this.humanPlayer.getCardsPlayer().get(i).equals(card)) {
@@ -186,15 +211,17 @@ public class GameUnoController implements Serializable {
         }
     }
 
-    @FXML
     void onHandleNext(ActionEvent event) {
         if (this.posInitCardToShow < this.humanPlayer.getCardsPlayer().size() - 4) {
             this.posInitCardToShow++;
             printCardsHumanPlayer();
         }
     }
-
-    @FXML
+    /**
+     * Handles navigating forward in the visible subset of the human player's hand.
+     *
+     * @param event the triggered action event
+     */
     void onHandleTakeCard(ActionEvent event) {
         if (gameUno.mustDrawFromDeck(humanPlayer)) {
             humanPlayer.addCard(this.deck.takeCard());
@@ -211,7 +238,11 @@ public class GameUnoController implements Serializable {
         threadSingUNOMachine.setPlayerHasSungUno(true);
         registrarEventoEnArchivo("Jugador dijo ¡UNO!");
     }
-
+    /**
+     * Appends a game event message to the persistent log file "eventos_uno.txt".
+     *
+     * the event description to record
+     */
     private void registrarEventoEnArchivo(String mensaje) {
         try (FileWriter fw = new FileWriter("eventos_uno.txt", true);
              BufferedWriter bw = new BufferedWriter(fw);

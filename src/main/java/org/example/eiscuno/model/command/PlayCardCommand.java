@@ -3,7 +3,9 @@ package org.example.eiscuno.model.command;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
-
+/**
+ * Command that encapsulates the action of playing a card from a player onto the table.
+ */
 public class PlayCardCommand implements Command {
     private Player player;
     private Table table;
@@ -16,7 +18,10 @@ public class PlayCardCommand implements Command {
         this.card = card;
         this.index = index;
     }
-
+    /**
+     * Executes the play: removes the card from the player's hand, places it on the table,
+     * and logs the action.
+     */
     @Override
     public void execute() {
         player.removeCard(index);

@@ -1,7 +1,7 @@
 package org.example.eiscuno.exception;
 
 /**
- * Excepción lanzada cuando una carta no puede ser jugada según las reglas del UNO.
+ * Exception thrown when a card cannot be played according to UN rules.
  */
 public class InvalidCardPlayException extends RuntimeException {
 
@@ -9,7 +9,8 @@ public class InvalidCardPlayException extends RuntimeException {
         super(message);
     }
 
-    // Opcional: Constructor con causa (útil para encadenar excepciones)
+
+    // Optional: Constructor with cause (useful for chaining exceptions)
     public InvalidCardPlayException(String message, Throwable cause) {
         super(message, cause);
     }
