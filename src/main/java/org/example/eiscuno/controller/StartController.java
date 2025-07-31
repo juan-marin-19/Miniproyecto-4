@@ -6,6 +6,11 @@ import javafx.scene.control.Button;
 import org.example.eiscuno.view.StartStage;
 
 import java.io.IOException;
+/**
+ * Controller for the start screen of the Uno application.
+ * Handles user actions from the initial menu such as starting a new game,
+ * continuing a previous game, or exiting the application.
+ */
 
 public class StartController {
 
@@ -19,7 +24,9 @@ public class StartController {
     }
 
     private StartStage stageManager;
-
+    /**
+     * Called automatically after the FXML is loaded. Currently no initialization logic is required.
+     */
 
     public void setStageManager(StartStage stageManager) {
         this.stageManager = stageManager;
@@ -28,10 +35,19 @@ public class StartController {
     public void startGame(ActionEvent event) throws IOException {
         stageManager.showGameScreen();
     }
-
+    /**
+     * Handles the action to continue a previously started game.
+     * <p>
+     * Implementation is pending; this should restore the previous game state
+     * and transition to the appropriate screen.
+     * </p>
+     *
+     * @param event the triggered action event
+     * @throws IOException if restoring or loading the game fails
+     */
     @FXML
     public void continueGame(ActionEvent event) throws IOException {
-        // Implementar la continuacion del juego.
+
     }
 
     @FXML
