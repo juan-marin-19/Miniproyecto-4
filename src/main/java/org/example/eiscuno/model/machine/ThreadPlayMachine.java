@@ -21,6 +21,7 @@
         private GameUnoController controller; // NUEVA línea arriba
 
         private volatile boolean hasPlayerPlayed;
+
         private final String[] colorNames = {"RED", "BLUE", "GREEN", "YELLOW"};
     
     
@@ -41,7 +42,7 @@
             while (!Thread.currentThread().isInterrupted()){
                 if(hasPlayerPlayed){
                     try{
-                        Thread.sleep(2000);
+                        Thread.sleep(3000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -98,7 +99,7 @@
                         if (card.getValue().equals("SKIP") || card.getValue().equals("RESERVE")) {
                             System.out.println("Machine mantiene su turno.");
                             try {
-                                Thread.sleep(2500); // pequeño delay antes de volver a jugar
+                                Thread.sleep(3000); // pequeño delay antes de volver a jugar
                             } catch (InterruptedException e) {
                                 return;
                             }

@@ -12,6 +12,7 @@ public class Card {
     private String color;
     private Image image;
     private ImageView cardImageView;
+    public static boolean testing = false;
 
     /**
      * Constructs a Card with the specified image URL and name.
@@ -23,7 +24,9 @@ public class Card {
         this.url = url;
         this.value = value;
         this.color = color;
-        this.image = new Image(String.valueOf(getClass().getResource(url)));
+        if(!testing) {
+            this.image = new Image(String.valueOf(getClass().getResource(url)));
+        }
         this.cardImageView = createCardImageView();
     }
 

@@ -133,6 +133,8 @@ public class GameUnoController {
         this.table = new Table();
         this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);//tabla gameUno == tabla del controlador( paso por referencia)
         this.posInitCardToShow = 0;
+        gameUno.playCard(deck.takeCard());
+        tableImageView.setImage(table.getCurrentCardOnTheTable().getImage());
     }
 
     /**
