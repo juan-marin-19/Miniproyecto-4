@@ -26,14 +26,16 @@ public class WinThread extends Thread{
         while (true) {
             if (machinePlayer.getCardsPlayer().isEmpty()) {
                 System.out.println("Machine gano");
-                gameUno.setGameEnded(true);
+                gameUno.endGame(machinePlayer);
+                // gameUno.setGameEnded(true); esto esta dentro de gameUno.endGame
                 threadPlayMachine.interrupt();
                 threadSingUNO.interrupt();
                 break;
 
             } else if (humanPlayer.getCardsPlayer().isEmpty()) {
                 System.out.println("Human gano");
-                gameUno.setGameEnded(true);  // ¡Aquí lo agregas también!
+                gameUno.endGame(humanPlayer);
+                // gameUno.setGameEnded(true);  // ¡Aquí lo agregas también!
                 threadPlayMachine.interrupt();
                 threadSingUNO.interrupt();
                 break;

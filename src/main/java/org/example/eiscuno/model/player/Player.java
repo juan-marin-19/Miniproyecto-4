@@ -63,4 +63,8 @@ public class Player implements IPlayer {
     public String getTypePlayer() {
         return typePlayer;
     }
+
+    public boolean isHuman() {
+        return this.getTypePlayer().equals("HUMAN_PLAYER");
+    }
 }

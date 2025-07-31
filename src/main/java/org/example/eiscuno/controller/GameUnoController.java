@@ -5,12 +5,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import org.example.eiscuno.exception.InvalidCardPlayException;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.deck.Deck;
+import org.example.eiscuno.model.game.GameObserver;
 import org.example.eiscuno.model.game.GameUno;
 import org.example.eiscuno.model.game.WinThread;
 import org.example.eiscuno.model.machine.ThreadPlayMachine;
@@ -27,7 +30,7 @@ import java.util.Optional;
 /**
  * Controller class for the Uno game.
  */
-public class GameUnoController {
+public class GameUnoController implements GameObserver {
 
     @FXML
     private GridPane gridPaneCardsMachine;
@@ -37,6 +40,11 @@ public class GameUnoController {
 
     @FXML
     private ImageView tableImageView;
+
+    @FXML private ImageView currentCardImage;
+    @FXML private Label currentPlayerLabel;
+    @FXML private ListView<Card> playerHandView;
+
 
     private Player humanPlayer;
     private Player machinePlayer;
@@ -109,7 +117,10 @@ public class GameUnoController {
     @FXML
     public void initialize() {
         initVariables();
-        this.gameUno.startGame();
+        gameUno.addObserver(this);
+        gameUno.startGame();
+
+
         printCardsHumanPlayer();
 
         threadSingUNOMachine = new ThreadSingUNOMachine(this.humanPlayer.getCardsPlayer(), this.humanPlayer, this.gameUno,this);
@@ -127,12 +138,58 @@ public class GameUnoController {
      * Initializes the variables for the game.
      */
     private void initVariables() {
-        this.humanPlayer = new Player("HUMAN_PLAYER");
-        this.machinePlayer = new Player("MACHINE_PLAYER");
-        this.deck = new Deck();
-        this.table = new Table();
-        this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);//tabla gameUno == tabla del controlador( paso por referencia)
+        this.gameUno = GameUno.getInstance();
+        this.humanPlayer = gameUno.getHumanPlayer(); // Necesitarás añadir este método
+        this.machinePlayer = gameUno.getMachinePlayer();
+        this.deck = gameUno.getDeck();
+        this.table = gameUno.getTable();
         this.posInitCardToShow = 0;
+    }
+
+    @Override
+    public void onCardPlayed(Card card) {
+        Platform.runLater(() -> {
+            tableImageView.setImage(card.getImage());
+        });
+    }
+
+    @Override
+    public void onPlayerChanged(Player player) {
+        Platform.runLater(() -> {
+            currentPlayerLabel.setText(player.getTypePlayer());
+        });
+    }
+
+    @Override
+    public void onGameStarted() {
+        Platform.runLater(() -> {
+            // Inicializar UI al comenzar el juego
+            currentPlayerLabel.setText("Tu turno: " + humanPlayer.getTypePlayer());
+        });
+    }
+
+    @Override
+    public void onCardDrawn(Player player, Card drawnCard) {
+        Platform.runLater(() -> {
+            if (player.isHuman()) {
+                printCardsHumanPlayer(); // Actualiza la vista cuando el humano roba
+            }
+        });
+    }
+
+    @Override
+    public void onGameEnded(Player winner) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("¡Juego terminado!");
+            alert.setHeaderText(winner.getTypePlayer() + " ha ganado.");
+            alert.showAndWait();
+            try {
+                stageManager.showStartScreen(); // Volver al menú principal
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**
@@ -200,6 +257,7 @@ public class GameUnoController {
                         tableImageView.setImage(card.getImage());
                         humanPlayer.removeCard(findPosCardsHumanPlayer(card));
 
+
                         // Manejo de turnos especiales
                         if (card.getValue().equals("SKIP") || card.getValue().equals("RESERVE")) {
                             System.out.println("\nEl jugador sigue en su turno");
@@ -243,6 +301,19 @@ public class GameUnoController {
         }
     }
 
+
+    public void printCardsMachinePlayer() {
+        this.gridPaneCardsPlayer.getChildren().clear();
+
+        // Obtener cartas visibles del jugador maquina
+        Card[] currentVisibleCardsMachinePlayer = this.gameUno.getCurrentVisibleCardsMachinePlayer(this.posInitCardToShow);
+
+        for (int i = 0; i < currentVisibleCardsMachinePlayer.length; i++) {
+            Card card = currentVisibleCardsMachinePlayer[i];
+            tableImageView.setImage(card.getImage());
+            humanPlayer.removeCard(findPosCardsHumanPlayer(card));
+        }
+    }
 
 
     /**
