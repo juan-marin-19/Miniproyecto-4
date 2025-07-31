@@ -1,5 +1,6 @@
 package org.example.eiscuno.model.game;
 
+import javafx.application.Platform;
 import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.player.Player;
 /**
@@ -38,6 +39,8 @@ public class WinThread extends Thread{
                 gameUno.setGameEnded(true);
                 threadPlayMachine.interrupt();
                 threadSingUNO.interrupt();
+                showGameOverMessage("La máquina ha ganado. ¡Inténtalo de nuevo!");
+
                 break;
 
             } else if (humanPlayer.getCardsPlayer().isEmpty()) {
@@ -45,6 +48,8 @@ public class WinThread extends Thread{
                 gameUno.setGameEnded(true);  // ¡Aquí lo agregas también!
                 threadPlayMachine.interrupt();
                 threadSingUNO.interrupt();
+                showGameOverMessage("¡Has ganado la partida!");
+
                 break;
 
             } else if (deck.isEmpty()) {
@@ -52,6 +57,9 @@ public class WinThread extends Thread{
                 gameUno.setGameEnded(true);  // Y aquí también
                 threadPlayMachine.interrupt();
                 threadSingUNO.interrupt();
+                showGameOverMessage("El mazo se ha agotado. Fin del juego.");
+
+
                 break;
             }
 
@@ -63,4 +71,19 @@ public class WinThread extends Thread{
             }
         }
     }
+
+    private void showGameOverMessage(String message) {
+        Platform.runLater(() -> {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+            alert.setTitle("Game Over");
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+
+            // Estilo del texto
+            alert.getDialogPane().setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+            alert.showAndWait();
+        });
+    }
+
 }
